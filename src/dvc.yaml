@@ -1,0 +1,37 @@
+stages:
+  collect_data:
+    cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - scrapper/tech_indicator_scrapper.py
+    #outs:
+    #- data/raw_data/yfinancetechdata/
+  process_data:
+    cmd: python data_processor/tech_indicator_processor.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data/yfinancetechdata
+      -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - scrapper/tech_indicator_scrapper.py
+    #outs:
+    #- data/clean_data/yfinancetechdata
+  model_data:
+    cmd: python model_factory/auto_arima.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - scrapper/tech_indicator_scrapper.py
+    - model_factory/auto_arima.py
+    outs:
+    - models/time_series_model.pkl
+  evaluate:
+    cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
+    deps:
+    - models/time_series_model.pkl
+    - model_factory/evaluate_arima.py
+    outs:
+    - eval/importance.png
+    metrics:
+    - eval/live/metrics.json:
+        cache: false
