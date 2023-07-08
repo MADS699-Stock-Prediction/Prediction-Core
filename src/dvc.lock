@@ -41,5 +41,25 @@ stages:
     outs:
     - path: models/time_series_model.pkl
       hash: md5
-      md5: e8833a321d9c4c4b60d63efaa95ee700
+      md5: e906a5e0a5676fcc096d2a0073cf06e0
       size: 1531591
+  evaluate:
+    cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
+    deps:
+    - path: model_factory/evaluate_arima.py
+      hash: md5
+      md5: 83bd327d50f4916a6ce32f492f22d245
+      size: 3150
+    - path: models/time_series_model.pkl
+      hash: md5
+      md5: e906a5e0a5676fcc096d2a0073cf06e0
+      size: 1531591
+    outs:
+    - path: eval/importance.png
+      hash: md5
+      md5: 299ae61fcfa51260d843ab37c2298881
+      size: 8017
+    - path: eval/live/metrics.json
+      hash: md5
+      md5: 426391af6f2a387213da6ee796bc1d19
+      size: 74
