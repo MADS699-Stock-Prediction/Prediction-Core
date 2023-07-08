@@ -1,0 +1,45 @@
+schema: '2.0'
+stages:
+  collect_data:
+    cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+  process_data:
+    cmd: python data_processor/tech_indicator_processor.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data/yfinancetechdata
+      -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: 140c2b988ffa4af0f997cfdd2f4f365f
+      size: 1721
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+  model_data:
+    cmd: python model_factory/auto_arima.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: 140c2b988ffa4af0f997cfdd2f4f365f
+      size: 1721
+    - path: model_factory/auto_arima.py
+      hash: md5
+      md5: cdf7bc4ce8147c797d5966ee5859c0cb
+      size: 3540
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/time_series_model.pkl
+      hash: md5
+      md5: e8833a321d9c4c4b60d63efaa95ee700
+      size: 1531591
