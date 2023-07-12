@@ -29,7 +29,7 @@ def download_gnews_data(stock_id =['TSLA'], start_date ='02/01/2020',
         print(gnews_data.published)
         gnews_data.to_csv(file_path_pygnews)
         data = pd.DataFrame(google_news.get_news(id))
-        data.save(file_path_gnews)
+        data.to_csv(file_path_gnews)
 if __name__ == '__main__':
     import argparse
 

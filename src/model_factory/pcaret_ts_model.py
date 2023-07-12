@@ -1,3 +1,4 @@
+# can not install on the local system works on colab only
 from pycaret.time_series import *
 import pandas as pd
 
@@ -8,7 +9,7 @@ def get_best_ts_model(stock_id =['TSLA'],
                clean_tech_data_store_dir='data/clean_data',
                model_storage_path = 'models/'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_pygooglenews" + id + "_"+start_date +"_" +end_date
 
     df = pd.read_csv(clean_file_path)
     df = df.asfreq('B')

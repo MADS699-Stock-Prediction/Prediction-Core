@@ -15,8 +15,8 @@ stages:
     deps:
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 140c2b988ffa4af0f997cfdd2f4f365f
-      size: 1721
+      md5: 6126e41b0f8f40506f145b92c994f747
+      size: 2760
     - path: scrapper/tech_indicator_scrapper.py
       hash: md5
       md5: a603de210a3a4d932e884fa5baa015d0
@@ -28,8 +28,8 @@ stages:
     deps:
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 140c2b988ffa4af0f997cfdd2f4f365f
-      size: 1721
+      md5: 6126e41b0f8f40506f145b92c994f747
+      size: 2760
     - path: model_factory/auto_arima.py
       hash: md5
       md5: cdf7bc4ce8147c797d5966ee5859c0cb
@@ -41,8 +41,8 @@ stages:
     outs:
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 007b7370221f178b9c859eea0a6c5618
-      size: 1531591
+      md5: 9a26df2500f30219b6b001c4d43e189d
+      size: 1473247
   evaluate:
     cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
     deps:
@@ -52,8 +52,8 @@ stages:
       size: 3150
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 007b7370221f178b9c859eea0a6c5618
-      size: 1531591
+      md5: 9a26df2500f30219b6b001c4d43e189d
+      size: 1473247
     outs:
     - path: eval/importance.png
       hash: md5
@@ -61,5 +61,21 @@ stages:
       size: 8017
     - path: eval/live/metrics.json
       hash: md5
-      md5: 0c5883a760d486453b11248dc2708c51
+      md5: 2411354554648e37d5ab51c5aa9fc239
       size: 73
+  collect_tech_data:
+    cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+  collect_gnews_data:
+    cmd: python scrapper/gnews_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: scrapper/gnews_scrapper.py
+      hash: md5
+      md5: 13983a3f9093845ff0d576cfd705bd2d
+      size: 2095

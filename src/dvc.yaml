@@ -1,11 +1,19 @@
 stages:
-  collect_data:
+  collect_tech_data:
     cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
       data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
     deps:
     - scrapper/tech_indicator_scrapper.py
     #outs:
     #- data/raw_data/yfinancetechdata/
+  collect_gnews_data:
+    cmd: python scrapper/gnews_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - scrapper/gnews_scrapper.py
+    #outs:
+    #- data/raw_data/yfinancetechdata/
+
   process_data:
     cmd: python data_processor/tech_indicator_processor.py --stock_ids TSLA -raw_tech_data_store_dir
       data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data/yfinancetechdata

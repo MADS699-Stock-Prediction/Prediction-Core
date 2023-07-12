@@ -1,0 +1,6 @@
+Collecting MongoEngine
+  Downloading mongoengine-0.27.0-py3-none-any.whl (110 kB)
+     -------------------------------------- 110.6/110.6 kB 1.1 MB/s eta 0:00:00
+Requirement already satisfied: pymongo<5.0,>=3.4 in c:\users\91987\appdata\local\packages\pythonsoftwarefoundation.python.3.11_qbz5n2kfra8p0\localcache\local-packages\python311\site-packages (from MongoEngine) (3.12.3)
+Installing collected packages: MongoEngine
+Successfully installed MongoEngine-0.27.0
