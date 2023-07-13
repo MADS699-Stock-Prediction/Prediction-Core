@@ -21,7 +21,6 @@ def process_tech_indicator_data(stock_id =['TSLA'], start_date ='2008-03-01',
 def append_tech_indicators(df):
         #get indicator lists
         indicators = df.ta.indicators(as_list=True)
-        print("All available technical indicator list", indicators)
         df.ta.sma(50,append=True)
         df.ta.macd(close='close', fast=12, slow=26, append=True)
         df.ta.rsi(close='close',append=True)

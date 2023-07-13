@@ -22,14 +22,18 @@ def download_gnews_data(stock_id =['TSLA'], start_date ='02/01/2020',
 
     for id in list(stock_id):
         print(id)
+
         data = googlenews.search(id, when='2y')['entries']
         gnews_data =pd.DataFrame(data)
         file_path_pygnews = raw_tech_data_store_dir + "/googlenewsdata_pygnews_" + id + "_"+start_date +"_" +end_date
         file_path_gnews = raw_tech_data_store_dir + "/googlenewsdata_gnews_" + id + "_"+start_date +"_" +end_date
+        print(file_path_gnews)
+        print(file_path_pygnews)
         print(gnews_data.published)
         gnews_data.to_csv(file_path_pygnews)
-        data = pd.DataFrame(google_news.get_news(id))
-        data.to_csv(file_path_gnews)
+        #data = pd.DataFrame(google_news.get_news(id)) 
+        #data.to_csv(file_path_gnews)
+        
 if __name__ == '__main__':
     import argparse
 

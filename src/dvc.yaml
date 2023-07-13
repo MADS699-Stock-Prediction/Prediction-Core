@@ -13,7 +13,15 @@ stages:
     - scrapper/gnews_scrapper.py
     #outs:
     #- data/raw_data/yfinancetechdata/
-
+  extract_gnews_sentiment:
+    cmd: python sentiment_analyzer/analyze_n_append_gnews_sentiment.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/googlenewsdata -clean_tech_data_store_dir data/clean_data/googlenewsdata
+      -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - sentiment_analyzer/analyze_n_append_gnews_sentiment.py
+    - scrapper/gnews_scrapper.py
+    #outs:
+    #- data/clean_data/yfinancetechdata
   process_data:
     cmd: python data_processor/tech_indicator_processor.py --stock_ids TSLA -raw_tech_data_store_dir
       data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data/yfinancetechdata
