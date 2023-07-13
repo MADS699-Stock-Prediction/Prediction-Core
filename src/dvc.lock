@@ -15,8 +15,8 @@ stages:
     deps:
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 6126e41b0f8f40506f145b92c994f747
-      size: 2760
+      md5: 6348479c4efca3d25ffa070dcd64994b
+      size: 2691
     - path: scrapper/tech_indicator_scrapper.py
       hash: md5
       md5: a603de210a3a4d932e884fa5baa015d0
@@ -28,8 +28,8 @@ stages:
     deps:
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 6126e41b0f8f40506f145b92c994f747
-      size: 2760
+      md5: 6348479c4efca3d25ffa070dcd64994b
+      size: 2691
     - path: model_factory/auto_arima.py
       hash: md5
       md5: cdf7bc4ce8147c797d5966ee5859c0cb
@@ -41,7 +41,7 @@ stages:
     outs:
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 9a26df2500f30219b6b001c4d43e189d
+      md5: 372982213101d5aa3fa77fb27c39683c
       size: 1473247
   evaluate:
     cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
@@ -52,7 +52,7 @@ stages:
       size: 3150
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 9a26df2500f30219b6b001c4d43e189d
+      md5: 372982213101d5aa3fa77fb27c39683c
       size: 1473247
     outs:
     - path: eval/importance.png
@@ -77,5 +77,18 @@ stages:
     deps:
     - path: scrapper/gnews_scrapper.py
       hash: md5
-      md5: 13983a3f9093845ff0d576cfd705bd2d
-      size: 2095
+      md5: 96ce2cf5cbd94ddb624cd3c4a7ff019e
+      size: 2176
+  extract_gnews_sentiment:
+    cmd: python sentiment_analyzer/analyze_n_append_gnews_sentiment.py --stock_ids
+      TSLA -raw_tech_data_store_dir data/raw_data/googlenewsdata -clean_tech_data_store_dir
+      data/clean_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: scrapper/gnews_scrapper.py
+      hash: md5
+      md5: 96ce2cf5cbd94ddb624cd3c4a7ff019e
+      size: 2176
+    - path: sentiment_analyzer/analyze_n_append_gnews_sentiment.py
+      hash: md5
+      md5: 3e03efd1dce8cf3461739ede666c0965
+      size: 2503
