@@ -1,7 +1,12 @@
 #Raw Data => Clean Data => Combined Data => Model
 
-all: models/time_series_model.pkl
+all: models/time_series_model.pkl models/pycaret_model.pkl
 
+models/pycaret_model.pkl: process_raw_data model_factory/pcaret_ts_model.py
+	python model_factory/pcaret_ts_model.py --stock_ids TSLA \
+	-clean_tech_data_store_dir data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20 \
+	-model_storage_path models/
+ 
 #Build model simple time series
 models/time_series_model.pkl: process_raw_data process_raw_gnews_data_extract_sentiment model_factory/auto_arima.py
 	python model_factory/auto_arima.py --stock_ids TSLA \
