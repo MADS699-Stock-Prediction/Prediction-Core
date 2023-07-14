@@ -15,8 +15,8 @@ stages:
     deps:
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 6348479c4efca3d25ffa070dcd64994b
-      size: 2691
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
     - path: scrapper/tech_indicator_scrapper.py
       hash: md5
       md5: a603de210a3a4d932e884fa5baa015d0
@@ -26,10 +26,14 @@ stages:
       data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
       -model_storage_path models/
     deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
     - path: data_processor/tech_indicator_processor.py
       hash: md5
-      md5: 6348479c4efca3d25ffa070dcd64994b
-      size: 2691
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
     - path: model_factory/auto_arima.py
       hash: md5
       md5: cdf7bc4ce8147c797d5966ee5859c0cb
@@ -41,8 +45,8 @@ stages:
     outs:
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 372982213101d5aa3fa77fb27c39683c
-      size: 1473247
+      md5: bdd840afce2e3debc555163b7d10b89a
+      size: 1372456
   evaluate:
     cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
     deps:
@@ -52,8 +56,8 @@ stages:
       size: 3150
     - path: models/time_series_model.pkl
       hash: md5
-      md5: 372982213101d5aa3fa77fb27c39683c
-      size: 1473247
+      md5: bdd840afce2e3debc555163b7d10b89a
+      size: 1372456
     outs:
     - path: eval/importance.png
       hash: md5
@@ -61,7 +65,7 @@ stages:
       size: 8017
     - path: eval/live/metrics.json
       hash: md5
-      md5: 2411354554648e37d5ab51c5aa9fc239
+      md5: 0d3fa601ab3af483d7a255f169502546
       size: 73
   collect_tech_data:
     cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
@@ -92,3 +96,29 @@ stages:
       hash: md5
       md5: 3e03efd1dce8cf3461739ede666c0965
       size: 2503
+  pycaret_model_data:
+    cmd: python model_factory/pcaret_ts_model.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
+    - path: model_factory/auto_arima.py
+      hash: md5
+      md5: cdf7bc4ce8147c797d5966ee5859c0cb
+      size: 3540
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/pycaret_model.pkl
+      hash: md5
+      md5: a762eb6401991b4437094243ff6a3e7a
+      size: 65680

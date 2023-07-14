@@ -38,9 +38,21 @@ stages:
     deps:
     - data_processor/tech_indicator_processor.py
     - scrapper/tech_indicator_scrapper.py
+    - data_processor/combine_tech_and_fundamentals.py
     - model_factory/auto_arima.py
     outs:
     - models/time_series_model.pkl
+  pycaret_model_data:
+    cmd: python model_factory/pcaret_ts_model.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - data_processor/combine_tech_and_fundamentals.py
+    - scrapper/tech_indicator_scrapper.py
+    - model_factory/auto_arima.py
+    outs:
+    - models/pycaret_model.pkl
   evaluate:
     cmd: python model_factory/evaluate_arima.py models/time_series_model.pkl
     deps:

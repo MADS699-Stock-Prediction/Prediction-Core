@@ -16,7 +16,7 @@ models/time_series_model.pkl: process_raw_data process_raw_gnews_data_extract_se
 #	Clean
 #	transform
 #	Feature generate if any
-process_raw_data:  get_raw_tech_data data_processor/tech_indicator_processor.py
+process_raw_data:  get_raw_tech_data data_processor/combine_tech_and_fundamentals.py data_processor/tech_indicator_processor.py
 	python data_processor/tech_indicator_processor.py --stock_ids TSLA  -raw_tech_data_store_dir data/raw_data/yfinancetechdata \
 	-clean_tech_data_store_dir data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
 

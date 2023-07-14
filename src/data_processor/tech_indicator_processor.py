@@ -3,6 +3,8 @@ import numpy as np
 from numpy import log
 import io
 import pandas_ta as ta
+# Combine helper
+from combine_tech_and_fundamentals import combine_tech_indicators_and_fundamentals
 
 def process_tech_indicator_data(stock_id =['TSLA'], start_date ='2008-03-01', 
                             end_date ='2023-06-20',
@@ -10,36 +12,49 @@ def process_tech_indicator_data(stock_id =['TSLA'], start_date ='2008-03-01',
                             clean_tech_data_store_dir='data/clean_data'):
     for id in list(stock_id):
         print(id)
-        raw_file_path = raw_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        raw_file_path = raw_tech_data_store_dir + "/tech_indicator_" + id + \
+                                    "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + \
+                                     "_"+start_date +"_" +end_date
+        fundamental_path = raw_tech_data_store_dir + "/tech_fundamental_" + id + \
+                                    "_"+start_date +"_" +end_date +".csv"
         df = pd.read_csv(raw_file_path)
-        ##################Add all technical indicators#################
+        ##################Add all technical indicators#######################
         append_tech_indicators(df)
-        #################End technical indicators#######################
-        df = df.dropna()
+        #################End technical indicators############################
+
+        ##################Combine fundamentals with the indicators###########
+        new_df = combine_tech_indicators_and_fundamentals( 
+                                fundamentals_path = fundamental_path, 
+                                tech_indicator_df = df)
+        ##################End combine fundamentals with tech indicators######
+        df = new_df.dropna()
         df.to_csv(clean_file_path)
 def append_tech_indicators(df):
         #get indicator lists
         indicators = df.ta.indicators(as_list=True)
         df.ta.sma(50,append=True)
-        df.ta.macd(close='close', fast=12, slow=26, append=True)
-        df.ta.rsi(close='close',append=True)
-        df.ta.tsi(close='close',append=True)
+        df.ta.tsi(close='Adj close',append=True)
 
-        df.ta.bbands(close='close', append=True)
+        df.ta.bbands(close='Adj close', append=True)
         #volume
-        df.ta.pvi( append=True)
-        df.ta.nvi( append=True)
-        df.ta.obv( append=True)
+        df.ta.pvi(close='Adj Close', append=True)
+        df.ta.nvi(close='Adj Close', append=True)
         # performance 
-        df.ta.atr( append=True)
-        df.ta.pvi( append=True)
+        df.ta.atr(close='Adj Close', append=True)
+        df.ta.pvi(close='Adj Close', append=True)
         #Trend
-        df.ta.adx(append=True)
-        df.ta.increasing(append=True)    
-        df.ta.decreasing(append=True)    
-        df.ta.vwma(append=True)    
-    
+        df.ta.adx(close='Adj Close',append=True)
+        df.ta.increasing(close='Adj Close', append=True)    
+        df.ta.decreasing(close='Adj Close', append=True)    
+        df.ta.vwma(close='Adj Close',append=True)    
+        # Moving average convergence divergence
+        df.ta.macd(close='Adj Close', fast=12, slow=26, append=True)
+        df.ta.rsi(close='Adj Close',  append=True) # Relative strength index
+        df.ta.obv(close='Adj Close', append=True) # On Balance Volume
+        df.ta.ad(close='Adj Close', append=True) # Accumulation distribution line
+        df.ta.adx(close='Adj Close', append=True) # Average directional index
+        df.ta.ao(close='Adj Close', append=True) # Aroon oscillator
         return df
 
 if __name__ == '__main__':
