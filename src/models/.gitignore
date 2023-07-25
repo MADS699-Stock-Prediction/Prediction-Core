@@ -1,2 +1,4 @@
 /time_series_model.pkl
 /pycaret_model.pkl
+/ann_model.pkl
+/lstm_model.pkl

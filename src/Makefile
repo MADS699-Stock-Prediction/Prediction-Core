@@ -1,6 +1,24 @@
 #Raw Data => Clean Data => Combined Data => Model
 
-all: models/time_series_model.pkl models/pycaret_model.pkl
+all: models/time_series_model.pkl \
+	models/pycaret_model.pkl models/pycaret_regression_model.pkl \
+	models/ann.pkl models/lstm.pkl
+
+models/lstm.pkl: process_raw_data model_factory/lstm.py
+	python model_factory/lstm.py --stock_ids TSLA \
+	-clean_tech_data_store_dir data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20 \
+	-model_storage_path models/
+
+models/ann.pkl: process_raw_data model_factory/ann.py
+	python model_factory/ann.py --stock_ids TSLA \
+	-clean_tech_data_store_dir data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20 \
+	-model_storage_path models/
+
+models/pycaret_regression_model.pkl: process_raw_data model_factory/pycaret_regression_model.py
+	python model_factory/pycaret_regression_model.py --stock_ids TSLA \
+	-clean_tech_data_store_dir data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20 \
+	-model_storage_path models/
+
 
 models/pycaret_model.pkl: process_raw_data model_factory/pcaret_ts_model.py
 	python model_factory/pcaret_ts_model.py --stock_ids TSLA \

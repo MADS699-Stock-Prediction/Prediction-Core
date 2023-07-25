@@ -122,3 +122,106 @@ stages:
       hash: md5
       md5: a762eb6401991b4437094243ff6a3e7a
       size: 65680
+  pycaret_ts_model_data:
+    cmd: python model_factory/pcaret_ts_model.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
+    - path: model_factory/auto_arima.py
+      hash: md5
+      md5: cdf7bc4ce8147c797d5966ee5859c0cb
+      size: 3540
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/pycaret_model.pkl
+      hash: md5
+      md5: a762eb6401991b4437094243ff6a3e7a
+      size: 65680
+  pycaret_regression_model_data:
+    cmd: python model_factory/pycaret_regression_model.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
+    - path: model_factory/feature_n_test_train_provider.py
+      hash: md5
+      md5: 2fb196516bcda226ed30b3248c7da4ea
+      size: 858
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/pycaret_regression_model.pkl
+      hash: md5
+      md5: 7d651f3e0f6870c977c7e88e34d7bf6d
+      size: 9543603
+  ann_model_data:
+    cmd: python model_factory/ann.py --stock_ids TSLA -clean_tech_data_store_dir data/clean_data/yfinancetechdata
+      -start_date 2018-06-20 -end_date 2023-06-20 -model_storage_path models/
+    deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
+    - path: model_factory/feature_n_test_train_provider.py
+      hash: md5
+      md5: 2fb196516bcda226ed30b3248c7da4ea
+      size: 858
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/ann_model.pkl
+      hash: md5
+      md5: 30ef1f3073749b5a675424af0f51e6b2
+      size: 10763
+  lstm_model_data:
+    cmd: python model_factory/lstm.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - path: data_processor/combine_tech_and_fundamentals.py
+      hash: md5
+      md5: 855c468e7be0bde4189d79f30946e21b
+      size: 2558
+    - path: data_processor/tech_indicator_processor.py
+      hash: md5
+      md5: cf7a358c99fe58450521d819f764ba72
+      size: 3898
+    - path: model_factory/feature_n_test_train_provider.py
+      hash: md5
+      md5: 2fb196516bcda226ed30b3248c7da4ea
+      size: 858
+    - path: scrapper/tech_indicator_scrapper.py
+      hash: md5
+      md5: a603de210a3a4d932e884fa5baa015d0
+      size: 1436
+    outs:
+    - path: models/lstm_model.pkl
+      hash: md5
+      md5: cec54a81d9a1f0dc3816a570d095fdde
+      size: 56298

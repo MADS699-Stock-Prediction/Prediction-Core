@@ -42,7 +42,7 @@ stages:
     - model_factory/auto_arima.py
     outs:
     - models/time_series_model.pkl
-  pycaret_model_data:
+  pycaret_ts_model_data:
     cmd: python model_factory/pcaret_ts_model.py --stock_ids TSLA -clean_tech_data_store_dir
       data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
       -model_storage_path models/
@@ -63,3 +63,38 @@ stages:
     metrics:
     - eval/live/metrics.json:
         cache: false
+  pycaret_regression_model_data:
+    cmd: python model_factory/pycaret_regression_model.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - data_processor/combine_tech_and_fundamentals.py
+    - scrapper/tech_indicator_scrapper.py
+    - model_factory/feature_n_test_train_provider.py
+    outs:
+    - models/pycaret_regression_model.pkl
+
+  ann_model_data:
+    cmd: python model_factory/ann.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - data_processor/combine_tech_and_fundamentals.py
+    - scrapper/tech_indicator_scrapper.py
+    - model_factory/feature_n_test_train_provider.py
+    outs:
+    - models/ann_model.pkl
+
+  lstm_model_data:
+    cmd: python model_factory/lstm.py --stock_ids TSLA -clean_tech_data_store_dir
+      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      -model_storage_path models/
+    deps:
+    - data_processor/tech_indicator_processor.py
+    - data_processor/combine_tech_and_fundamentals.py
+    - scrapper/tech_indicator_scrapper.py
+    - model_factory/feature_n_test_train_provider.py
+    outs:
+    - models/lstm_model.pkl
