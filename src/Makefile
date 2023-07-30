@@ -44,6 +44,11 @@ process_raw_gnews_data_extract_sentiment:  get_raw_gnews_data sentiment_analyzer
 	-clean_tech_data_store_dir data/clean_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-06-20
 
 #collect gnews data
+get_raw_eodnews_data:	scrapper/eodhistdata_scrapper.py
+	python scrapper/eodhistdata_scrapper.py --stock_ids TSLA  -raw_tech_data_store_dir data/raw_data/eodnewsdata \
+	-start_date 2018-06-20 -end_date 2023-06-20
+
+#collect gnews data
 get_raw_gnews_data:	scrapper/gnews_scrapper.py
 	python scrapper/gnews_scrapper.py --stock_ids TSLA  -raw_tech_data_store_dir data/raw_data/googlenewsdata \
 	-start_date 2018-06-20 -end_date 2023-06-20

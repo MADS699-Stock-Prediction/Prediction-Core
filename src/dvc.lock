@@ -225,3 +225,11 @@ stages:
       hash: md5
       md5: cec54a81d9a1f0dc3816a570d095fdde
       size: 56298
+  collect_eodnews_data:
+    cmd: python scrapper/eodhistdata_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/eodnewsdata -start_date 2018-06-20 -end_date 2023-06-20
+    deps:
+    - path: scrapper/eodhistdata_scrapper.py
+      hash: md5
+      md5: 76506baa68f901aa29cd771ca02b7b16
+      size: 3306
