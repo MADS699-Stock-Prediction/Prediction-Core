@@ -3,6 +3,7 @@ from pycaret.time_series import *
 from pycaret import *
 import pandas as pd
 import pickle
+import numpy as np
 
 def get_best_ts_model(stock_id =['TSLA'], 
                start_date ='2008-03-01', 
@@ -19,7 +20,9 @@ def get_best_ts_model(stock_id =['TSLA'],
     print(df.head())
     df = df[['Close']]
     print(df.head())
-    s = setup(data =df.Close , fh = 3, fold = 5, session_id = 123, numeric_imputation_target ='ffill', log_experiment=True)
+    df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
+
+    s = setup(data =df.log_ret , fh = 3, fold = 5, session_id = 123, numeric_imputation_target ='ffill', log_experiment=True)
     best = compare_models()
     plot_model(best, plot = 'forecast', data_kwargs = {'fh' : 24})
     plot_model(best, plot = 'diagnostics')
