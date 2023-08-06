@@ -25,7 +25,7 @@ def evaluate(stock_id =['TSLA'],
                live ='live_path',
                save_path='save_path'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
         df = pd.read_csv(clean_file_path)
         X_train = df[:int(len(df)*.9)]['Close']
         labels = df[int(len(df)*.9):]['Close']

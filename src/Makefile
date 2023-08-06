@@ -43,8 +43,8 @@ process_raw_data:  get_raw_tech_data process_raw_eodnews_data_extract_sentiment 
 
 # Process and extract sentiment from the raw news data
 process_raw_gnews_data_extract_sentiment:  get_raw_gnews_data sentiment_analyzer/analyze_n_append_gnews_sentiment.py
-	python sentiment_analyzer/analyze_n_append_gnews_sentiment.py --stock_ids $(stocks)  -raw_tech_data_store_dir data/raw_data/eodnewsdata \
-	-clean_tech_data_store_dir data/clean_data/eodnewsdata -start_date $(x_start_date) -end_date $(x_end_date)
+	python sentiment_analyzer/analyze_n_append_gnews_sentiment.py --stock_ids $(stocks)  -raw_tech_data_store_dir data/raw_data/googlenewsdata \
+	-clean_tech_data_store_dir data/clean_data/googlenewsdata -start_date $(x_start_date) -end_date $(x_end_date)
 
 # Process and extract sentiment from the eod news data
 process_raw_eodnews_data_extract_sentiment:  get_raw_eodnews_data sentiment_analyzer/analyze_eod_news_sentiment.py

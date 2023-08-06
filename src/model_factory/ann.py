@@ -73,7 +73,7 @@ class Regressor(nn.Module):
     def __init__(self):
         super().__init__()
         self.dropout = nn.Dropout(0.1)
-        self.hidden1 = nn.Linear(31, 62)
+        self.hidden1 = nn.Linear(33, 62)
         self.act1 = nn.Tanh()
         self.output = nn.Linear(62, 1)
         self.act_output = nn.Tanh()
