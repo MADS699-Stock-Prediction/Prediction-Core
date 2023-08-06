@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the Money Moneymakers project. Our goal is to predict future stock returns of individual stocks by analyzing various historic financial KPIs along with sentiments extracted out of social media via natural language processing (NLP). This project will help improve understanding of machine learning application in the area of stock market prediction.
+Welcome to the Team 17 Moneymakers. Our goal is to predict future returns of individual stocks by analyzing various technical, historic financial KPIs along with sentiments extracted out of social media via natural language processing (NLP). This project will help improve understanding of the machine learning application in the area of stock market prediction.
 
 # Getting Started
 
