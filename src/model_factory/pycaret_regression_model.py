@@ -7,6 +7,11 @@ import pickle
 import IPython
 import matplotlib_inline
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib
+
+
+scaler = MinMaxScaler()
 
 from  feature_n_test_train_provider import return_train_test_with_feature
 
@@ -19,9 +24,19 @@ def get_best_regression_model(stock_id =['TSLA'],
                clean_tech_data_store_dir='data/clean_data',
                model_storage_path = 'models/'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
     print(clean_file_path)
     df = pd.read_csv(clean_file_path)
+    df_new = df[['Close','score']]
+    df_new = df_new.tail(30)
+    print(df_new.tail(30))
+    df_new= scaler.fit_transform(df_new)
+    df_new1 = pd.DataFrame(df_new, columns = ['Close','score'])
+
+    df_new1.tail(30).plot(title ="MinMax(0,1) Close vs Sentiment Score ")
+    plt.show()    
+    plt.savefig('MinMax(0,1) Close vs Sentiment Score.png')
+
     df_train, df_test = return_train_test_with_feature(df)
     s = setup(df_train, target="CUMPCTRET_6", session_id=1234,fold_strategy='timeseries', normalize=True,log_experiment=True)
     best = compare_models()
