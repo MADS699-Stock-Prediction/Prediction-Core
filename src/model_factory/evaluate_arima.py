@@ -18,9 +18,9 @@ def forecast_one_step(model):
         np.asarray(conf_int).tolist()[0])
 
 def evaluate(stock_id =['TSLA'], 
-               start_date ='2008-03-01', 
-               end_date ='2023-06-20', 
-               clean_tech_data_store_dir='data/clean_data',
+               start_date ='2018-06-20', 
+               end_date ='2023-08-05', 
+               clean_tech_data_store_dir='data/clean_data/all_combined',
                model_file = 'models/time_series_model.pkl',
                live ='live_path',
                save_path='save_path'):
@@ -63,7 +63,7 @@ def save_importance_plot(model, save_path):
     model.plot_diagnostics(figsize=(10,8))
     fig.savefig(os.path.join(save_path, "importance.png"))
 
-def main():
+def Eval1():
     EVAL_PATH = "eval"
 
     if len(sys.argv) != 2:
@@ -86,8 +86,8 @@ def main():
     live = Live(os.path.join(EVAL_PATH, "live"), dvcyaml=False)
     evaluate (stock_id =['TSLA'], 
                start_date ='2018-06-20', 
-               end_date ='2023-06-20', 
-               clean_tech_data_store_dir='data/clean_data/yfinancetechdata',
+               end_date ='2023-08-05', 
+               clean_tech_data_store_dir='data/clean_data/all_combined',
                model_file = 'models/time_series_model.pkl',
                live=live,
                save_path=eval)
@@ -98,4 +98,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    Eval1()

@@ -2,3 +2,4 @@
 /pycaret_model.pkl
 /ann_model.pkl
 /lstm_model.pkl
+/pycaret_regression_model.pkl

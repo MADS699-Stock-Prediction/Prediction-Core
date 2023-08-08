@@ -1,14 +1,14 @@
 stages:
   collect_tech_data:
     cmd: python scrapper/tech_indicator_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
-      data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/raw_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-08-05
     deps:
     - scrapper/tech_indicator_scrapper.py
     #outs:
     #- data/raw_data/yfinancetechdata/
   collect_eodnews_data:
     cmd: python scrapper/eodhistdata_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
-      data/raw_data/eodnewsdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/raw_data/eodnewsdata -start_date 2018-06-20 -end_date 2023-08-05
     deps:
     - scrapper/eodhistdata_scrapper.py
     #outs:
@@ -16,7 +16,7 @@ stages:
 
   collect_gnews_data:
     cmd: python scrapper/gnews_scrapper.py --stock_ids TSLA -raw_tech_data_store_dir
-      data/raw_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/raw_data/googlenewsdata -start_date 2018-06-20 -end_date 2023-08-05
     deps:
     - scrapper/gnews_scrapper.py
     #outs:
@@ -24,16 +24,27 @@ stages:
   extract_gnews_sentiment:
     cmd: python sentiment_analyzer/analyze_n_append_gnews_sentiment.py --stock_ids TSLA -raw_tech_data_store_dir
       data/raw_data/googlenewsdata -clean_tech_data_store_dir data/clean_data/googlenewsdata
-      -start_date 2018-06-20 -end_date 2023-06-20
+      -start_date 2018-06-20 -end_date 2023-08-05
     deps:
     - sentiment_analyzer/analyze_n_append_gnews_sentiment.py
     - scrapper/gnews_scrapper.py
     #outs:
     #- data/clean_data/yfinancetechdata
+
+  extract_eodnews_sentiment:
+    cmd: python sentiment_analyzer/analyze_eod_news_sentiment.py --stock_ids TSLA -raw_tech_data_store_dir
+      data/raw_data/eodnewsdata -clean_tech_data_store_dir data/clean_data/eodnewsdata
+      -start_date 2018-06-20 -end_date 2023-08-05
+    deps:
+    - sentiment_analyzer/analyze_eod_news_sentiment.py
+    - scrapper/eodhistdata_scrapper.py
+    #outs:
+    #- data/clean_data/yfinancetechdata
+
   process_data:
     cmd: python data_processor/tech_indicator_processor.py --stock_ids TSLA -raw_tech_data_store_dir
-      data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data/yfinancetechdata
-      -start_date 2018-06-20 -end_date 2023-06-20
+      data/raw_data/yfinancetechdata -clean_tech_data_store_dir data/clean_data
+      -start_date 2018-06-20 -end_date 2023-08-05
     deps:
     - data_processor/tech_indicator_processor.py
     - scrapper/tech_indicator_scrapper.py
@@ -41,7 +52,7 @@ stages:
     #- data/clean_data/yfinancetechdata
   model_data:
     cmd: python model_factory/auto_arima.py --stock_ids TSLA -clean_tech_data_store_dir
-      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/clean_data/all_combined -start_date 2018-06-20 -end_date 2023-08-05
       -model_storage_path models/
     deps:
     - data_processor/tech_indicator_processor.py
@@ -52,13 +63,15 @@ stages:
     - models/time_series_model.pkl
   pycaret_ts_model_data:
     cmd: python model_factory/pcaret_ts_model.py --stock_ids TSLA -clean_tech_data_store_dir
-      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/clean_data/all_combined -start_date 2018-06-20 -end_date 2023-08-05
       -model_storage_path models/
     deps:
     - data_processor/tech_indicator_processor.py
     - data_processor/combine_tech_and_fundamentals.py
     - scrapper/tech_indicator_scrapper.py
     - model_factory/auto_arima.py
+    - sentiment_analyzer/analyze_eod_news_sentiment.py
+    - scrapper/eodhistdata_scrapper.py  
     outs:
     - models/pycaret_model.pkl
   evaluate:
@@ -73,36 +86,43 @@ stages:
         cache: false
   pycaret_regression_model_data:
     cmd: python model_factory/pycaret_regression_model.py --stock_ids TSLA -clean_tech_data_store_dir
-      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/clean_data/all_combined -start_date 2018-06-20 -end_date 2023-08-05
       -model_storage_path models/
     deps:
     - data_processor/tech_indicator_processor.py
     - data_processor/combine_tech_and_fundamentals.py
     - scrapper/tech_indicator_scrapper.py
     - model_factory/feature_n_test_train_provider.py
+    - sentiment_analyzer/analyze_eod_news_sentiment.py
+    - scrapper/eodhistdata_scrapper.py
+
     outs:
     - models/pycaret_regression_model.pkl
 
   ann_model_data:
     cmd: python model_factory/ann.py --stock_ids TSLA -clean_tech_data_store_dir
-      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/clean_data/all_combined -start_date 2018-06-20 -end_date 2023-08-05
       -model_storage_path models/
     deps:
     - data_processor/tech_indicator_processor.py
     - data_processor/combine_tech_and_fundamentals.py
     - scrapper/tech_indicator_scrapper.py
     - model_factory/feature_n_test_train_provider.py
+    - sentiment_analyzer/analyze_eod_news_sentiment.py
+    - scrapper/eodhistdata_scrapper.py
     outs:
     - models/ann_model.pkl
 
   lstm_model_data:
     cmd: python model_factory/lstm.py --stock_ids TSLA -clean_tech_data_store_dir
-      data/clean_data/yfinancetechdata -start_date 2018-06-20 -end_date 2023-06-20
+      data/clean_data/all_combined -start_date 2018-06-20 -end_date 2023-08-05
       -model_storage_path models/
     deps:
     - data_processor/tech_indicator_processor.py
     - data_processor/combine_tech_and_fundamentals.py
     - scrapper/tech_indicator_scrapper.py
     - model_factory/feature_n_test_train_provider.py
+    - sentiment_analyzer/analyze_eod_news_sentiment.py
+    - scrapper/eodhistdata_scrapper.py
     outs:
     - models/lstm_model.pkl
