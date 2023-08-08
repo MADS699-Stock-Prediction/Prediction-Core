@@ -31,22 +31,21 @@ def get_lstm_model(stock_id =['TSLA'],
                clean_tech_data_store_dir='data/clean_data',
                model_storage_path = 'models/'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
     print(clean_file_path)
     df = pd.read_csv(clean_file_path)
-    data = df.filter(['Close'])
-    print(data)
-    data = data.pct_change(periods=6)
+    data = df.filter(['Close','score'])
+    data.Close = data.Close.pct_change(periods=6)
     # get three day forecast not just for tomorrow
-    data = data.shift(-6) 
+    data.Close = data.Close.shift(-6) 
     data = data.dropna()
 
     # Convert the dataframe to a numpy array
     dataset = data.values
     # Get the number of rows to train the model on
     training_data_len = int(np.ceil( len(dataset) * .9 ))
-    X_train = dataset[:int(np.ceil( len(dataset) * .9 ))]
-    y_test = dataset[int(np.ceil( len(dataset) * .9 )):]
+    #X_train = dataset[:int(np.ceil( len(dataset) * .9 ))]
+    #y_test = dataset[int(np.ceil( len(dataset) * .9 )):]
 # function to create train, test data given stock data and sequence length
     look_back = 40 # choose sequence length
     x_train, y_train, x_test, y_test = load_data(dataset, look_back)
@@ -59,12 +58,16 @@ def get_lstm_model(stock_id =['TSLA'],
     y_train = torch.from_numpy(y_train).type(torch.Tensor)
     y_test = torch.from_numpy(y_test).type(torch.Tensor)
     y_train.size(),x_train.size()
+    # Build model#####################
+    input_dim = 2
+    hidden_dim = 64
+    num_layers = 2
+    output_dim = 1
     model = LSTM(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=output_dim, num_layers=num_layers)
 
     loss_fn = torch.nn.MSELoss()
 
-    optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
-    print(model)
+    optimiser = torch.optim.Adam(model.parameters(), lr=0.01)
     print(len(list(model.parameters())))
     for i in range(len(list(model.parameters()))):
         print(list(model.parameters())[i].size())
@@ -87,23 +90,24 @@ def predict(model,x_test,y_test):
     y_test_pred = (y_test_pred.detach().numpy())
     y_test = (y_test.detach().numpy())
 
-    testScore = np.sqrt(mean_squared_error(y_test[:,0], y_test_pred[:,0]))
+    testScore = np.sqrt(mean_squared_error(y_test, y_test_pred[:,0]))
     print('Test Score: %.2f RMSE' % (testScore))
-    print(f"R2 SCORE: {r2_score(y_test[:,0], y_test_pred[:,0])}")
+    print(f"R2 SCORE: {r2_score(y_test, y_test_pred[:,0])}")
     real =[]
     predict =[]
     for i in range(y_test_pred.shape[0]):
         #real.append(x_test[i].item())
         predict.append(y_test_pred[i].item())
             #print(f"{y_pred[i].item()} (expected {y_test[i].numpy()})")
-    data_frame = pd.DataFrame(y_test[:,0],y_test_pred[:,0])
+    data_frame = pd.DataFrame(y_test,y_test_pred[:,0])
     data_frame = data_frame.reset_index()
     data_frame.columns =['real','predicted']
-    print(data_frame.head(-10))
 
     data_frame.head()
     data_frame.plot()
     plt.show()
+    data_frame.plot(title = "LSTM Prediction").get_figure().savefig('data/visualization/output.png')
+
 
 def load_data(stock, look_back):
     data_raw = stock
@@ -113,26 +117,16 @@ def load_data(stock, look_back):
     for index in range(len(data_raw) - look_back):
         data.append(data_raw[index: index + look_back])
 
-    data = np.array(data);
+    data = np.array(data)
     test_set_size = int(np.round(0.1*data.shape[0]));
     train_set_size = data.shape[0] - (test_set_size);
 
     x_train = data[:train_set_size,:-1,:]
-    y_train = data[:train_set_size,-1,:]
+    y_train = data[:train_set_size,-1,0]
 
     x_test = data[train_set_size:,:-1]
-    y_test = data[train_set_size:,-1,:]
-
+    y_test = data[train_set_size:,-1,0]
     return [x_train, y_train, x_test, y_test]
-
-
-# Build model
-#####################
-input_dim = 1
-hidden_dim = 32
-num_layers = 2
-output_dim = 1
-
 
 # Here we define our model as a class
 class LSTM(nn.Module):
@@ -189,7 +183,7 @@ def train_model(look_back, model, x_train,y_train,loss_fn,optimiser):
         # Forward pass
         y_train_pred = model(x_train)
 
-        loss = loss_fn(y_train_pred, y_train)
+        loss = loss_fn(y_train_pred[:,0], y_train)
         if t % 10 == 0 and t !=0:
             print("Epoch ", t, "MSE: ", loss.item())
         hist[t] = loss.item()

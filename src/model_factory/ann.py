@@ -7,7 +7,6 @@ import pandas as pd
 import copy
 import tqdm
 import pickle
-
 from  feature_n_test_train_provider import return_train_test_with_feature
 
 def get_ann_model(stock_id =['TSLA'], 
@@ -16,7 +15,7 @@ def get_ann_model(stock_id =['TSLA'],
                clean_tech_data_store_dir='data/clean_data',
                model_storage_path = 'models/'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
     print(clean_file_path)
     df = pd.read_csv(clean_file_path)
     df_train, df_test = return_train_test_with_feature(df)
@@ -74,7 +73,7 @@ class Regressor(nn.Module):
     def __init__(self):
         super().__init__()
         self.dropout = nn.Dropout(0.1)
-        self.hidden1 = nn.Linear(31, 62)
+        self.hidden1 = nn.Linear(33, 62)
         self.act1 = nn.Tanh()
         self.output = nn.Linear(62, 1)
         self.act_output = nn.Tanh()

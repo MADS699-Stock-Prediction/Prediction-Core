@@ -18,14 +18,14 @@ def forecast_one_step(model):
         np.asarray(conf_int).tolist()[0])
 
 def evaluate(stock_id =['TSLA'], 
-               start_date ='2008-03-01', 
-               end_date ='2023-06-20', 
-               clean_tech_data_store_dir='data/clean_data',
+               start_date ='2018-06-20', 
+               end_date ='2023-08-05', 
+               clean_tech_data_store_dir='data/clean_data/all_combined',
                model_file = 'models/time_series_model.pkl',
                live ='live_path',
                save_path='save_path'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
         df = pd.read_csv(clean_file_path)
         X_train = df[:int(len(df)*.9)]['Close']
         labels = df[int(len(df)*.9):]['Close']
@@ -63,7 +63,7 @@ def save_importance_plot(model, save_path):
     model.plot_diagnostics(figsize=(10,8))
     fig.savefig(os.path.join(save_path, "importance.png"))
 
-def main():
+def Eval1():
     EVAL_PATH = "eval"
 
     if len(sys.argv) != 2:
@@ -86,8 +86,8 @@ def main():
     live = Live(os.path.join(EVAL_PATH, "live"), dvcyaml=False)
     evaluate (stock_id =['TSLA'], 
                start_date ='2018-06-20', 
-               end_date ='2023-06-20', 
-               clean_tech_data_store_dir='data/clean_data/yfinancetechdata',
+               end_date ='2023-08-05', 
+               clean_tech_data_store_dir='data/clean_data/all_combined',
                model_file = 'models/time_series_model.pkl',
                live=live,
                save_path=eval)
@@ -98,4 +98,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    Eval1()

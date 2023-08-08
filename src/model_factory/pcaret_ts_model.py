@@ -11,7 +11,7 @@ def get_best_ts_model(stock_id =['TSLA'],
                clean_tech_data_store_dir='data/clean_data',
                model_storage_path = 'models/'):
     for id in stock_id:
-        clean_file_path = clean_tech_data_store_dir + "/tech_indicator_" + id + "_"+start_date +"_" +end_date
+        clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
     print(clean_file_path)
     df = pd.read_csv(clean_file_path)
     df = df[['Close']]
