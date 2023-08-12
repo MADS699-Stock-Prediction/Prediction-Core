@@ -1,6 +1,8 @@
 from datetime import date, datetime, timedelta
 import pandas as pd
 import urllib.request
+from os.path import exists
+import urllib, json
 
 def get_datetime(datestr):
     from datetime import datetime
@@ -30,19 +32,19 @@ def get_news_from_eodhistoricaldata(stock_id =['TSLA'], start_date ='02/01/2020'
 
     for id in list(stock_id):
         print(id)
-        news_data = get_news_data(id, start_date,end_date)
-        news_data['date_time'] = news_data['date'].apply(get_datetime)
         file_path_eodnews = raw_tech_data_store_dir + "/eodnewsdata_" + id + "_"+start_date +"_" +end_date
-        news_data.to_csv(file_path_eodnews)
+        file_exists = exists(file_path_eodnews)
+        if not file_exists:
+            news_data = get_news_data(id, start_date,end_date,file_path_eodnews)
+            news_data['date_time'] = news_data['date'].apply(get_datetime)
+            news_data.to_csv(file_path_eodnews)
 
 
-def get_news_data(tikr, start_date, end_date):
-    from os.path import exists
-    import urllib, json
+def get_news_data(tikr, start_date, end_date,file_path_eodnews):
 
     ticker=tikr
     api_token = ""
-    file = "scrapper/news.json"
+    file = file_path_eodnews+ ".json"
     
     file_exists = exists(file)
     
@@ -67,12 +69,14 @@ def get_news_data(tikr, start_date, end_date):
                 response = urllib.request.urlopen(url)
                 data = json.loads(response.read())
                 result.extend(data)
-
-        with open("news.json", "w") as outfile:
-            json.dump(result, outfile)
+        print("I am DONEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!")
+    with open(file, "w") as outfile:
+        json.dump(result, outfile)
     result_new = pd.json_normalize(result)    
     result_new['date_time'] = result_new['date'].apply(get_datetime)
-    print(result_new[['sentiment.polarity','sentiment.pos','sentiment.neg','sentiment.neu','sentiment']])
+    print(result_new.head())
+    print(result_new.columns)
+    #print(result_new[['sentiment.polarity','sentiment.pos','sentiment.neg','sentiment.neu','sentiment']])
     return result_new
 
 if __name__ == '__main__':

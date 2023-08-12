@@ -2,38 +2,63 @@ import statsmodels.api as sm
 import pandas as pd
 from statsmodels.tsa.stattools import grangercausalitytests
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 def perform_granger_causality(stock_id =['TSLA'], 
                start_date ='2018-06-20', 
                end_date ='2023-08-05', 
                clean_tech_data_store_dir='../data/clean_data/all_combined',
                causality_storage_path = '../data/clean_data/causal_inference/'):
+    stock_tickr = None
     for id in stock_id:
         clean_file_path = clean_tech_data_store_dir + "/tech_fundamental_sentiment_" + id + "_"+start_date +"_" +end_date
+        stock_tickr = id
     print(clean_file_path)
     df = pd.read_csv(clean_file_path)
     # as of now only sentiment score and log_ret
-    cols_to_drop = ['Date','Date.1','Close','High','Low','Open','Adj Close','totalasset','shares','dps','eps','ebitda','bv']
+    cols_to_drop = ['Unnamed: 0','Date','Date.1','Close','High','Low','Open','Adj Close']
+    if stock_tickr =='TSLA':
+        cols_to_drop = ['Unnamed: 0','Date','Date.1','Close','High','Low','Open','Adj Close','totalasset','shares','dps','eps','ebitda','bv']
     #variables = list(set(df.columns)-set(cols_to_drop))
     #print(variables)
-    df = df.tail(100)
+    df = df.tail(365)
     df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
-    calculate_correlations(df,causality_storage_path)
+    plot_sentiment_vs_log_ret(df,causality_storage_path,stock_tickr)
+    calculate_correlations(df,causality_storage_path,stock_tickr)
+
     df = df.drop(columns=cols_to_drop)
     df = df.dropna()
+    print(df.columns)
+    df = df.loc[:, (df != df.iloc[0]).any()] 
+    print(df.columns)
     variables =  df.columns
+    lag_period = 10
     test = 'ssr_chi2test'
-    #Check with lag 10
-    causality_df = check_causality(df,variables,test,True,10) 
-    causality_df.to_csv(causality_storage_path + 'granger_causality_output.csv',header=True)
+    causality_df = check_causality(df,variables,test,True,lag_period) 
+    causality_df.to_csv(causality_storage_path + stock_tickr + str(lag_period) + \
+                 'granger_causality_output.csv',header=True)
 
-def calculate_correlations(df,causality_storage_path):
+def plot_sentiment_vs_log_ret(df,causality_storage_path,stock_tickr):
+    log_ret_n_setiment = ['log_ret', 'score']
+    df_for_graph = df[log_ret_n_setiment] 
+    scaler = MinMaxScaler(feature_range=(-1,1))
+    df_for_graph = scaler.fit_transform(df_for_graph)
+    df_for_graph =pd.DataFrame(df_for_graph,columns=log_ret_n_setiment)
+
+    plot = df_for_graph.plot(title = stock_tickr + "_log_ret and sentiment score")   
+    fig = plot.get_figure()
+    fig.savefig(causality_storage_path + stock_tickr + "_log_ret and sentiment score.png")
+    plt.show()
+
+def calculate_correlations(df,causality_storage_path,tickr):
     #df.corr().to_csv(causality_storage_path, header=True)
     corr_methods= ['pearson', 'kendall', 'spearman']
     for corr_method in corr_methods:
-        print(df.head())
         corr= df.reset_index().drop(columns=['index','Date.1','Date']).corr()
-        corr.to_csv(causality_storage_path + corr_method+'_correlations.csv', header=True)
+        corr.to_csv(causality_storage_path +tickr + '_' + corr_method + \
+                    '_correlations.csv', header=True)
+
 def check_causality(main_df,variables,test,log,maxlag):
     """
         Check Granger Causality of all possible combinations of the Time series
@@ -50,6 +75,7 @@ def check_causality(main_df,variables,test,log,maxlag):
     df = pd.DataFrame(np.zeros((len(variables), len(variables))), columns=variables, index=variables)
     for c in df.columns:
         for r in df.index:
+            print('Working for ==>',r)
             test_result = grangercausalitytests(main_df[[r, c]], maxlag=maxlag)
             p_values = [round(test_result[i+1][0][test][1],4) for i in range(maxlag)]
             #if log: print(f'Y = {r}, X = {c}, P Values = {p_values}')

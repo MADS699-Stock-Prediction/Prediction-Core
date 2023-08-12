@@ -1,0 +1,34 @@
+#!/bin/bash
+
+### RUN THIS SCRIPT TO GENERAE ALL POSSIBLE COMBINATION OF MODELS AN EVALUATION RESULTS##
+#### RESULTS MATRIX IS AVAILABLE UNDER data/model/metrics.csv ###########################
+# Create the model based on TSLA with sentiment########################################## 
+
+# Train model with TSLA data
+make STOCK=TSLA models/vanilla_lstm models/ann.pkl models/pycaret_regression_model.pkl models/pycaret_ts_model.pkl
+#evaluate model
+make STOCK=F models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=GM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=TM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+# Train model with F data
+make STOCK=F models/vanilla_lstm models/ann.pkl models/pycaret_regression_model.pkl models/pycaret_ts_model.pkl
+#evaluate model 
+make STOCK=TSLA models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=GM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=TM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+# Train model with GM Data
+make STOCK=GM models/vanilla_lstm models/ann.pkl models/pycaret_regression_model.pkl models/pycaret_ts_model.pkl
+#Evaluate model with others
+make STOCK=TSLA models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=F models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=TM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+
+# Train model with TM
+make STOCK=TM models/vanilla_lstm models/ann.pkl models/pycaret_regression_model.pkl models/pycaret_ts_model.pkl
+
+#evaluate model
+make STOCK=TSLA models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=F models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+make STOCK=GM models/evaluate_vanilla_lstm models/evaluate_ann models/evaluate_pycaret_regression_model
+
+## Need to extend for other models also

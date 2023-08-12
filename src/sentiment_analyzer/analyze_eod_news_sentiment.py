@@ -4,6 +4,8 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 nltk.download('vader_lexicon')
+from os.path import exists
+import urllib, json
 
 wsb_lexicon = {
     'moon': 3,
@@ -101,14 +103,16 @@ def combine_eodnews_sentiment(stock_id= ['TSLA'],
             #gnews_data =pd.DataFrame(data)
             file_path_eodnews = raw_tech_data_store_dir + "/eodnewsdata_" + id + "_"+start_date +"_" +end_date
             file_path_eodnews_with_sentiment = clean_tech_data_store_dir + "/eodnewsdata_" + id + "_"+start_date +"_" +end_date
-            print(file_path_eodnews,file_path_eodnews_with_sentiment)
-            df = pd.read_csv(file_path_eodnews)
-            df_combined = combine_title_content(df)
-            df_combined['date_time'] = pd.to_datetime(df_combined['date_time'])
-            print(df_combined.info(), df_combined.describe())
-            score_df = get_mean_scores(df_combined,'date_time')
-            score_df.to_csv(file_path_eodnews_with_sentiment)
-            print(score_df.head())
+            file_exists = exists(file_path_eodnews_with_sentiment)
+            if not file_exists:
+                print(file_path_eodnews,file_path_eodnews_with_sentiment)
+                df = pd.read_csv(file_path_eodnews)
+                df_combined = combine_title_content(df)
+                df_combined['date_time'] = pd.to_datetime(df_combined['date_time'])
+                print(df_combined.info(), df_combined.describe())
+                score_df = get_mean_scores(df_combined,'date_time')
+                score_df.to_csv(file_path_eodnews_with_sentiment)
+                print(score_df.head())
 
 if __name__ == '__main__':
     import argparse
