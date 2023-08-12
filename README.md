@@ -43,7 +43,7 @@ The project follows a standard layout. The major components of the directory str
 # Statement of Work
 Prediction_Core is a team work by Atul Kumar, Kiran Hedge and GyungYoon Park(Nathan).
 # Note
-To reproduce complete research data and outcome pleae purchase the API key from [eodhistoricdata](https://eodhd.com/) 
+To reproduce complete research data and outcome purchase the news API key from [eodhistoricdata](https://eodhd.com/) 
 and use the same for eodscrapper under src/scrapper.
 
 # License
