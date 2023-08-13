@@ -24,8 +24,15 @@ Python 3.7 or higher - the primary programming language
 
     pip install -r requirements.txt
 
-5. make
+5. To evaluate various model metrics (produces result csv file data/model/metrics.csv)
+  
+   ./run_TSLA_F_GM_TM_all_combination_train_evaluate
+   
+6. To reproduce all results including data collections,sentiment analysis (require eodhist API key for eodscrapper under src/scrapper folder)
 
+     make
+   ./run_TSLA_F_GM_TM_all_combination_train_evaluate
+   
 # Project Structure
 The project follows a standard layout. The major components of the directory structure are:
 [under cd Prediction-Core/src  ] 
@@ -37,7 +44,7 @@ The project follows a standard layout. The major components of the directory str
 - model_factory : various models including timeseries, regression, lstm and ann.
 - scrapper: Various scrappers for yfiance data, fundamental data, reddit data and various news related to stock/s.
 - notebooks: Contains Jupyter notebooks for data preparation, model training, and evaluation.
-- proof_of_concept_test: Various raw form of PoC this is a collection of standalone Jypyter noteboos for data extraction to visualizations.
+- proof_of_concept_test: Various raw form of PoC/experiments and data this is a collection of standalone Jupyter notebooks for data extraction to visualizations.
 - src: Source code for the project, including utilities, model training, text processing, and evaluation scripts.
 
 # Statement of Work
