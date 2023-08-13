@@ -46,7 +46,7 @@ The project follows a standard layout. The major components of the directory str
 
 - src: Source code for the project, including utilities, model training, text processing, and make and evaluation scripts.
 - data/raw_data: Directory for data files includes raw technical, fundamental and news data(if EODHIST API is available).
-- data/clean_data/all_combined: Directory for clean data files. Combined data file with sentiment for easy research reproducibility.
+- data/clean_data/all_combined: Directory for clean data files. Combined data files for (F,TSLA,GM,TM) with sentiment for fast reproducibility using script(./run_TSLA_F_GM_TM_all_combination_train_evaluate) only.
 - data/clean_data/causal_inference: Granger causality for each pair of features including label(log_ret) in this case.
 - data/visualization: Contains the visuals used in the report. 
 - data_processor : data clean up and processing python code. 
