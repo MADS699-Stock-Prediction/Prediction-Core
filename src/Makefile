@@ -7,9 +7,15 @@ x_start_date = 2018-06-20
 x_end_date = 2023-08-05
 stocks += $(STOCK)
 
-all: models/time_series_model.pkl \
-	models/pycaret_ts_model.pkl models/pycaret_regression_model.pkl \
-	models/ann.pkl models/lstm.pkl
+all: corr_n_granger_causality  \
+	models/pycaret_ts_model.pkl \
+	models/pycaret_regression_model.pkl \
+	models/ann.pkl \
+	models/lstm.pkl \
+	models/evaluate_pycaret_regression_model \
+	models/evaluate_vanilla_lstm \
+	models/vanilla_lstm \
+	models/evaluate_ann
 
 models/evaluate_pycaret_regression_model: model_factory/evaluate_pycaret_regression_model.py
 	python model_factory/evaluate_pycaret_regression_model.py --stock_ids $(stocks) \
@@ -40,7 +46,6 @@ models/evaluate_lstm: model_factory/evaluate_lstm.py
 
 #models/lstm.pkl: process_raw_data model_factory/lstm.py
 models/lstm.pkl: model_factory/lstm.py
-
 #models/lstm.pkl: model_factory/lstm.py 
 	python model_factory/lstm.py --stock_ids $(stocks) \
 	-clean_tech_data_store_dir data/clean_data/all_combined -start_date $(x_start_date) -end_date $(x_end_date) \
@@ -73,7 +78,7 @@ models/time_series_model.pkl: process_raw_data model_factory/auto_arima.py
 	-model_storage_path models/
 
 # Correlations and granger causality as of now no dependency on process data but run it after that
-corr_n_granger_causality: visual_causal_inference/granger_causality_check_for_features_n_label.py
+corr_n_granger_causality: process_raw_data visual_causal_inference/granger_causality_check_for_features_n_label.py
 	python visual_causal_inference/granger_causality_check_for_features_n_label.py --stock_ids $(stocks) \
 	-clean_tech_data_store_dir data/clean_data/all_combined \
 	-causality_storage_path data/clean_data/causal_inference/ \
