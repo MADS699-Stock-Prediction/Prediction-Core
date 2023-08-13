@@ -2,7 +2,7 @@
 
 Welcome to the Team 17 Moneymakers. Our goal is to predict future returns of individual stocks by analyzing various technical, historic financial KPIs along with sentiments extracted out of social media via natural language processing (NLP). This project will help improve understanding of the machine learning application in the area of stock market prediction.
 
-# Experiment Design (Architecture, Flow and Design)
+# Experiment Design
 
 ![architecture diagram](https://github.com/MADS699-Stock-Prediction/Prediction-Core/assets/6002688/3f98052e-7a8c-4546-9e98-8c87c87eed27)
 
@@ -32,10 +32,13 @@ Python 3.7 or higher - the primary programming language
   
    ./run_TSLA_F_GM_TM_all_combination_train_evaluate
    
-6. To reproduce all results including data collections,sentiment analysis (require eodhist API key for eodscrapper under src/scrapper folder)
-
-     make
-   ./run_TSLA_F_GM_TM_all_combination_train_evaluate
+6. To reproduce all results including data collections,sentiment analysis (require eodhist API key for eodscrapper under src/scrapper folder).
+   
+     make STOCK=TSLA process_raw_data
+     make STOCK=F process_raw_data
+     make STOCK=GM process_raw_data
+     make STOCK=TM process_raw_data   
+     ./run_TSLA_F_GM_TM_all_combination_train_evaluate
    
 # Project Structure
 The project follows a standard layout. The major components of the directory structure are:
