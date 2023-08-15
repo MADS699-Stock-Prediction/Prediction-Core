@@ -6,6 +6,11 @@ Welcome to the Team 17 Moneymakers. Our goal is to predict future returns of ind
 
 ![architecture diagram](https://github.com/MADS699-Stock-Prediction/Prediction-Core/assets/6002688/3f98052e-7a8c-4546-9e98-8c87c87eed27)
 
+# Data Source and Scope
+
+This report presents an analysis of the stock performance and news data for the companies Ford (F), General Motors (GM), Tesla (TSLA), and Toyota (TM) for the period from 2018 to 2023. The stock technical data was extracted using the yfinance API, while the stock news data was sourced from the eodhist API with a private API key.
+
+
 # Getting Started
 
 Follow the steps outlined below to set up and run the project:
